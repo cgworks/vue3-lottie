@@ -5,6 +5,7 @@
       :width="300"
       :height="300"
       @click="dataClick"
+      ref="testAnimation"
     />
   </ClientOnly>
 
@@ -58,6 +59,14 @@ function linkClick() {
 function dataClick() {
   data.value = Lottie
 }
+
+const testAnimation = ref();
+
+onMounted( () => {
+  if( process.client ) {
+     window.testAnimation = testAnimation; // Expose for testing
+  }
+});
 </script>
 
 <style>
