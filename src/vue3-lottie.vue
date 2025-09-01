@@ -114,6 +114,7 @@ export default defineComponent({
 
   setup(props, { emit: emits }) {
     const lottieAnimationContainer = ref<HTMLDivElement>()
+    const lottieAnimationRef = ref<AnimationItem | null>(null)
 
     let animationData: any
     let lottieAnimation: AnimationItem | null = null
@@ -161,6 +162,7 @@ export default defineComponent({
 
       // reset the lottieAnimation variable
       lottieAnimation = null
+      lottieAnimationRef.value = null
 
       // set the autoplay and loop variables
       let autoPlay = props.autoPlay
@@ -211,8 +213,9 @@ export default defineComponent({
 
       // actually load the animation
       lottieAnimation = Lottie.loadAnimation(lottieAnimationConfig)
+      lottieAnimationRef.value = lottieAnimation
 
-      setTimeout(() => {
+        setTimeout(() => {
         autoPlay = props.autoPlay
 
         if (props.playOnHover) {
@@ -252,26 +255,26 @@ export default defineComponent({
       }
 
       // set the emit events
-      lottieAnimation.addEventListener('loopComplete', () => {
+      lottieAnimation.addEventListener('loopComplete', (e: Object) => {
         if (props.direction === 'alternate') {
           lottieAnimation?.stop()
           direction = direction === -1 ? 1 : -1 //invert direction
           lottieAnimation?.setDirection(direction)
           lottieAnimation?.play()
         }
-        emits('onLoopComplete')
+        emits('onLoopComplete', e)
       })
 
-      lottieAnimation.addEventListener('complete', () => {
-        emits('onComplete')
+      lottieAnimation.addEventListener('complete', (e: Object) => {
+        emits('onComplete', e)
       })
 
-      lottieAnimation.addEventListener('enterFrame', () => {
-        emits('onEnterFrame')
+      lottieAnimation.addEventListener('enterFrame', (e: Object) => {
+        emits('onEnterFrame', e)
       })
 
-      lottieAnimation.addEventListener('segmentStart', () => {
-        emits('onSegmentStart')
+      lottieAnimation.addEventListener('segmentStart', (e: Object) => {
+        emits('onSegmentStart', e)
       })
     }
 
@@ -445,6 +448,7 @@ export default defineComponent({
     }
 
     return {
+      lottieAnimation: lottieAnimationRef,
       lottieAnimationContainer,
       hoverEnded,
       hoverStarted,
